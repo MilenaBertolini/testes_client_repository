@@ -1,5 +1,6 @@
 package com.iftm.client.repositories;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,14 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query("SELECT c FROM Client c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :param, '%'))")
     public List<Client> findClientByNameContains(@Param("param") String param);
 
+    
+	// Diego
+	
+    @Query("SELECT c FROM Client c WHERE c.income BETWEEN :valorMenor AND :valorMaior")
+    public List<Client> findClientBySalaryBetween(@Param("valorMenor") Double valorMenor, @Param("valorMaior") Double valorMaior);
+
+
+    public List<Client> findClientByBirthDateBetween(@Param("DataInicio") Instant DataInicio, @Param("DataTermino") Instant DataTermino);
+
+    
 }
