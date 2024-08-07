@@ -1,6 +1,7 @@
 package com.iftm.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -197,6 +198,100 @@ public class ClientRepositoryTest {
                 }
         );
         assertEquals(tamanhoBdEsperado, clientRepository.count());
+
+    }
+
+    // Barbara
+	
+	@Test
+    @DisplayName("Testando os métodos que retornam vários clientes baseado no salário - Salário superior que o valor")
+    public void TesteBuscaSalarioMaiorQueValorPassado(){
+
+        // Arrange
+        Double valorPassado = 5000.00;
+
+        // Act
+        List<Client> salarioMaior = clientRepository.findClientBySalaryGreaterThan(valorPassado);
+
+        // Assign
+        for (Client cliente : salarioMaior) {
+            assertTrue(cliente.getIncome() > valorPassado);
+        }
+        
+    }
+
+    @Test
+    @DisplayName("Testando os métodos que retornam vários clientes baseado no salário - Salário inferior que o valor")
+    public void TesteBuscaSalarioMenorQueValorPassado(){
+
+        // Arrange
+        Double valorPassado = 2000.00;
+
+        // Act
+        List<Client> salarioMenor = clientRepository.findClientBySalaryLessThan(valorPassado);
+
+        // Assign
+        for (Client cliente : salarioMenor) {
+            assertTrue(cliente.getIncome() < valorPassado);
+        }
+        
+    }
+
+    
+    @Test
+    @DisplayName("Verificar se a busca por id realmente retorna o cliente correto")
+    public void testarBuscaPorIdExistenteRetorandoClienteCorreto(){
+
+        // Arrange
+        Long idExistente = 5L;
+        String nomeEsperado = "Gilberto Gil";
+        String cpfEsperado = "10419344882";
+        Double salarioEsperado = 2500.0;
+        String instantDataNascimento = "1949-05-05T07:00:00Z";
+        Instant dataNascimentoEsperado = Instant.parse(instantDataNascimento);
+
+        // Act
+        Optional<Client> clientRetornado = clientRepository.findById(idExistente);
+
+        // Assign
+        assertNotNull(clientRetornado);
+        assertEquals(nomeEsperado, clientRetornado.get().getName());
+        assertEquals(cpfEsperado, clientRetornado.get().getCpf());
+        assertEquals(salarioEsperado, clientRetornado.get().getIncome());
+        assertEquals(dataNascimentoEsperado, clientRetornado.get().getBirthDate());
+    }
+
+    @Test
+    @DisplayName("Verificar se a busca por id inexistente não retorna resultado")
+    public void testarBuscaPorIdNaoExistente(){
+
+        // Arrange
+        Long idNaoExistente = 1000L;
+
+        // Act
+        Optional<Client> clientRetornado = clientRepository.findById(idNaoExistente);
+
+        // Assign
+        assertTrue(clientRetornado.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Testando busca de cliente utilizando o CPF")
+    public void testarBuscaPorCpf() {
+        // Arrange
+        String cpfExistente = "10619244884";
+        String nomeEsperado = "Djamila Ribeiro";
+        String cpfEsperado = "10619244884";
+        Double salarioEsperado = 4500.00;
+        
+        // Act
+        Optional<Client> clienteRetornado = clientRepository.findClientByCpf(cpfExistente);
+        
+        // Assert
+        assertTrue(clienteRetornado.isPresent());
+        assertEquals(nomeEsperado, clienteRetornado.get().getName());
+        assertEquals(cpfEsperado, clienteRetornado.get().getCpf());
+        assertEquals(salarioEsperado, clienteRetornado.get().getIncome());
 
     }
 }
